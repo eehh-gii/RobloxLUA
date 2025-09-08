@@ -203,21 +203,26 @@ end
 
 -- Auto Mine loop
 task.spawn(function()
-    while running do
+    while true do
         if autoMine then
             for _, ore in ipairs(Workspace.Ores:GetChildren()) do
-                if ore:IsA("Model") or ore:IsA("Part") then
-                    local root = ore:IsA("Model") and ore.PrimaryPart or ore
-                    if root and (root.Position - hrp.Position).Magnitude < 15 then
-                        equipPickaxe()
-                        triggerPrompt(ore)
-                    end
+                local root
+                if ore:IsA("Model") then
+                    root = ore.PrimaryPart or ore:FindFirstChildWhichIsA("BasePart")
+                elseif ore:IsA("BasePart") then
+                    root = ore
+                end
+
+                if root and (root.Position - hrp.Position).Magnitude < 15 then
+                    equipPickaxe()
+                    triggerPrompt(ore)
                 end
             end
         end
         task.wait(0.5)
     end
 end)
+
 
 -- Auto Collect loop
 task.spawn(function()
