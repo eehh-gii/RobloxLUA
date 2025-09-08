@@ -222,15 +222,14 @@ task.spawn(function()
     end
 end)
 
-
 -- Auto Collect loop
 task.spawn(function()
     while running do
         if autoCollect then
-            for _, shard in ipairs(Workspace:GetChildren()) do
+            for , shard in ipairs(Workspace:GetChildren()) do
                 if shard:IsA("Tool") and shard:FindFirstChild("Handle") then
                     local handle = shard.Handle
-                    if (handle.Position - hrp.Position).Magnitude < 15 then
+                    if (handle.Position - hrp.Position).Magnitude < 15 then -- kalau dekat
                         triggerPrompt(handle)
                     end
                 end
@@ -239,6 +238,7 @@ task.spawn(function()
         task.wait(0.5)
     end
 end)
+
 
 -- // Button Toggles
 AutoMineBtn.MouseButton1Click:Connect(function()
