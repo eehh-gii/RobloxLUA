@@ -113,78 +113,58 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = plr:WaitForChild("PlayerGui")
 
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 220, 0, 160)
+Frame.Size = UDim2.new(0, 220, 0, 150)
 Frame.Position = UDim2.new(0, 20, 0, 200)
 Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Frame.Parent = ScreenGui
 Frame.Active = true
-Frame.Draggable = true -- << bisa digeser
+Frame.Draggable = true -- draggable GUI
+Frame.Parent = ScreenGui
 
--- Title Bar
-local TitleBar = Instance.new("Frame")
-TitleBar.Size = UDim2.new(1, 0, 0, 25)
-TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
-TitleBar.Parent = Frame
-
-local TitleText = Instance.new("TextLabel")
-TitleText.Size = UDim2.new(1, -50, 1, 0)
-TitleText.Position = UDim2.new(0, 5, 0, 0)
-TitleText.BackgroundTransparency = 1
-TitleText.Text = "⛏️ Auto Mine GUI"
-TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
-TitleText.Font = Enum.Font.SourceSansBold
-TitleText.TextSize = 16
-TitleText.TextXAlignment = Enum.TextXAlignment.Left
-TitleText.Parent = TitleBar
-
--- Minimize Btn
+-- Tombol Minimize
 local MinBtn = Instance.new("TextButton")
-MinBtn.Size = UDim2.new(0, 25, 1, 0)
-MinBtn.Position = UDim2.new(1, -50, 0, 0)
+MinBtn.Size = UDim2.new(0, 30, 0, 20)
+MinBtn.Position = UDim2.new(1, -60, 0, 5)
 MinBtn.Text = "-"
-MinBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-MinBtn.Parent = TitleBar
+MinBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 0)
+MinBtn.Parent = Frame
 
--- Exit Btn
+-- Tombol Exit
 local ExitBtn = Instance.new("TextButton")
-ExitBtn.Size = UDim2.new(0, 25, 1, 0)
-ExitBtn.Position = UDim2.new(1, -25, 0, 0)
+ExitBtn.Size = UDim2.new(0, 30, 0, 20)
+ExitBtn.Position = UDim2.new(1, -30, 0, 5)
 ExitBtn.Text = "X"
 ExitBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-ExitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-ExitBtn.Parent = TitleBar
+ExitBtn.Parent = Frame
 
--- Buttons
+-- Tombol Auto Mine
 local AutoMineBtn = Instance.new("TextButton")
-AutoMineBtn.Size = UDim2.new(1, -20, 0, 30)
-AutoMineBtn.Position = UDim2.new(0, 10, 0, 35)
+AutoMineBtn.Size = UDim2.new(1, -10, 0, 30)
+AutoMineBtn.Position = UDim2.new(0, 5, 0, 30)
 AutoMineBtn.Text = "Auto Mine: OFF"
 AutoMineBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-AutoMineBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 AutoMineBtn.Parent = Frame
 
+-- Tombol Auto Collect
 local AutoCollectBtn = Instance.new("TextButton")
-AutoCollectBtn.Size = UDim2.new(1, -20, 0, 30)
-AutoCollectBtn.Position = UDim2.new(0, 10, 0, 70)
+AutoCollectBtn.Size = UDim2.new(1, -10, 0, 30)
+AutoCollectBtn.Position = UDim2.new(0, 5, 0, 65)
 AutoCollectBtn.Text = "Auto Collect: OFF"
 AutoCollectBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
-AutoCollectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 AutoCollectBtn.Parent = Frame
 
+-- Tombol Sell Crystal
 local SellBtn = Instance.new("TextButton")
-SellBtn.Size = UDim2.new(1, -20, 0, 30)
-SellBtn.Position = UDim2.new(0, 10, 0, 105)
+SellBtn.Size = UDim2.new(1, -10, 0, 30)
+SellBtn.Position = UDim2.new(0, 5, 0, 100)
 SellBtn.Text = "Sell Crystal"
-SellBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 200)
-SellBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SellBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
+SellBtn.TextColor3 = Color3.new(1, 1, 1)
 SellBtn.Parent = Frame
 
 -- // State
 local autoMine = false
 local autoCollect = false
-local guiVisible = true
-local running = true
+local minimized = false
 
 -- // Functions
 local function equipPickaxe()
@@ -206,9 +186,16 @@ task.spawn(function()
     while true do
         if autoMine then
             for _, ore in ipairs(Workspace.Ores:GetChildren()) do
-                if (ore.Position - hrp.Position).Magnitude < 15 then -- kalau dekat
+                local root
+                if ore:IsA("Model") then
+                    root = ore.PrimaryPart or ore:FindFirstChildWhichIsA("BasePart")
+                elseif ore:IsA("BasePart") then
+                    root = ore
+                end
+
+                if root and (root.Position - hrp.Position).Magnitude < 15 then
                     equipPickaxe()
-                    triggerPrompt(ore)
+                    triggerPrompt(root)
                 end
             end
         end
@@ -216,10 +203,9 @@ task.spawn(function()
     end
 end)
 
-
 -- Auto Collect loop
 task.spawn(function()
-    while running do
+    while true do
         if autoCollect then
             for _, shard in ipairs(Workspace:GetChildren()) do
                 if shard:IsA("Tool") and shard:FindFirstChild("Handle") then
@@ -234,7 +220,7 @@ task.spawn(function()
     end
 end)
 
--- // Button Toggles
+-- // Button Toggle
 AutoMineBtn.MouseButton1Click:Connect(function()
     autoMine = not autoMine
     AutoMineBtn.Text = "Auto Mine: " .. (autoMine and "ON" or "OFF")
@@ -249,22 +235,19 @@ SellBtn.MouseButton1Click:Connect(function()
     SellEvent:FireServer()
 end)
 
--- Minimize
-MinBtn.MouseButton1Click:Connect(function()
-    guiVisible = not guiVisible
-    for _, v in ipairs(Frame:GetChildren()) do
-        if v ~= TitleBar then
-            v.Visible = guiVisible
-        end
-    end
-    Frame.Size = guiVisible and UDim2.new(0, 220, 0, 160) or UDim2.new(0, 220, 0, 25)
-end)
-
--- Exit
 ExitBtn.MouseButton1Click:Connect(function()
-    running = false
     ScreenGui:Destroy()
 end)
+
+MinBtn.MouseButton1Click:Connect(function()
+    minimized = not minimized
+    for _, child in ipairs(Frame:GetChildren()) do
+        if child:IsA("TextButton") and child ~= MinBtn and child ~= ExitBtn then
+            child.Visible = not minimized
+        end
+    end
+end)
+
 
 
 -- ================================================================================================================================
