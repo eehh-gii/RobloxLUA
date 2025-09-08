@@ -88,6 +88,7 @@ SellBtn.Parent = Frame
 local autoMine = false
 local autoCollect = false
 local guiVisible = true
+local running = true -- penting biar Exit bisa stop loop
 
 -- // Functions
 local function equipPickaxe()
@@ -106,7 +107,7 @@ end
 
 -- Auto Mine loop
 task.spawn(function()
-    while true do
+    while running do
         if autoMine then
             for _, ore in ipairs(Workspace.Ores:GetChildren()) do
                 local root
@@ -126,15 +127,14 @@ task.spawn(function()
     end
 end)
 
-
 -- Auto Collect loop
 task.spawn(function()
-    while true do
+    while running do
         if autoCollect then
             for _, shard in ipairs(Workspace:GetChildren()) do
                 if shard:IsA("Tool") and shard:FindFirstChild("Handle") then
                     local handle = shard.Handle
-                    if (handle.Position - hrp.Position).Magnitude < 15 then -- kalau dekat
+                    if (handle.Position - hrp.Position).Magnitude < 15 then
                         triggerPrompt(handle)
                     end
                 end
@@ -143,7 +143,6 @@ task.spawn(function()
         task.wait(0.5)
     end
 end)
-
 
 -- // Button Toggles
 AutoMineBtn.MouseButton1Click:Connect(function()
@@ -173,6 +172,6 @@ end)
 
 -- Exit
 ExitBtn.MouseButton1Click:Connect(function()
-    running = false
+    running = false -- stop semua loop
     ScreenGui:Destroy()
 end)
