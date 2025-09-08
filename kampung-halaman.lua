@@ -1,99 +1,3 @@
---// Services
-local HttpService = game:GetService("HttpService")
-
---// Loader UI
-local ScreenGui = Instance.new("ScreenGui", game.CoreGui)
-local Frame = Instance.new("Frame", ScreenGui)
-Frame.Size = UDim2.new(0, 320, 0, 200)
-Frame.Position = UDim2.new(0.35, 0, 0.35, 0)
-Frame.BackgroundColor3 = Color3.fromRGB(30, 30, 30)
-Frame.Active = true
-Frame.Draggable = true
-
-local Title = Instance.new("TextLabel", Frame)
-Title.Size = UDim2.new(1, 0, 0, 40)
-Title.Text = "Key System"
-Title.TextColor3 = Color3.fromRGB(255, 255, 255)
-Title.BackgroundColor3 = Color3.fromRGB(50, 50, 50)
-Title.Font = Enum.Font.SourceSansBold
-Title.TextSize = 18
-
-local keyInput = Instance.new("TextBox", Frame)
-keyInput.PlaceholderText = "Enter Key..."
-keyInput.Size = UDim2.new(0.9, 0, 0, 35)
-keyInput.Position = UDim2.new(0.05, 0, 0.3, 0)
-keyInput.Text = ""
-keyInput.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-keyInput.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-local getBtn = Instance.new("TextButton", Frame)
-getBtn.Text = "Get Key"
-getBtn.Size = UDim2.new(0.43, 0, 0, 35)
-getBtn.Position = UDim2.new(0.05, 0, 0.55, 0)
-getBtn.BackgroundColor3 = Color3.fromRGB(0, 100, 200)
-getBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-local checkBtn = Instance.new("TextButton", Frame)
-checkBtn.Text = "Check Key"
-checkBtn.Size = UDim2.new(0.43, 0, 0, 35)
-checkBtn.Position = UDim2.new(0.52, 0, 0.55, 0)
-checkBtn.BackgroundColor3 = Color3.fromRGB(0, 170, 0)
-checkBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-
-local statusLbl = Instance.new("TextLabel", Frame)
-statusLbl.Size = UDim2.new(1, 0, 0, 25)
-statusLbl.Position = UDim2.new(0, 0, 0.85, 0)
-statusLbl.BackgroundTransparency = 1
-statusLbl.Text = "Input Your Key..."
-statusLbl.TextColor3 = Color3.fromRGB(255, 255, 255)
-
---// Tombol Get Key (Copy Link)
-getBtn.MouseButton1Click:Connect(function()
-    local link = "https://workink.net/23OL/zdbx28e2" -- ganti dengan link Work.ink kamu
-    if setclipboard then
-        setclipboard(link)
-        statusLbl.Text = "Link GetKey Copied!"
-    else
-        statusLbl.Text = "Paste link in browser:\n" .. link
-    end
-end)
-
---// Tombol Check Key
-checkBtn.MouseButton1Click:Connect(function()
-    local token = keyInput.Text
-    if token == "" then
-        statusLbl.Text = "Input your key!"
-        return
-    end
-
-    local url = "https://work.ink/_api/v2/token/isValid/" .. token
-
-    local success, response = pcall(function()
-        return game:HttpGet(url)
-    end)
-
-    if not success then
-        statusLbl.Text = "Tidak bisa connect API!"
-        return
-    end
-
-    local data
-    local ok = pcall(function()
-        data = HttpService:JSONDecode(response)
-    end)
-
-    if not ok or not data then
-        statusLbl.Text = "Response API salah!"
-        return
-    end
-
-    if data.valid then
-        statusLbl.Text = "Key valid! Open script..."
-        wait(1)
-        ScreenGui:Destroy()
-
--- ================================================================================================================================
-
 -- // Services
 local Players = game:GetService("Players")
 local Workspace = game:GetService("Workspace")
@@ -113,58 +17,77 @@ local ScreenGui = Instance.new("ScreenGui")
 ScreenGui.Parent = plr:WaitForChild("PlayerGui")
 
 local Frame = Instance.new("Frame")
-Frame.Size = UDim2.new(0, 220, 0, 150)
+Frame.Size = UDim2.new(0, 220, 0, 160)
 Frame.Position = UDim2.new(0, 20, 0, 200)
 Frame.BackgroundColor3 = Color3.fromRGB(40, 40, 40)
-Frame.Active = true
-Frame.Draggable = true -- draggable GUI
 Frame.Parent = ScreenGui
+Frame.Active = true
+Frame.Draggable = true -- << bisa digeser
 
--- Tombol Minimize
+-- Title Bar
+local TitleBar = Instance.new("Frame")
+TitleBar.Size = UDim2.new(1, 0, 0, 25)
+TitleBar.BackgroundColor3 = Color3.fromRGB(20, 20, 20)
+TitleBar.Parent = Frame
+
+local TitleText = Instance.new("TextLabel")
+TitleText.Size = UDim2.new(1, -50, 1, 0)
+TitleText.Position = UDim2.new(0, 5, 0, 0)
+TitleText.BackgroundTransparency = 1
+TitleText.Text = "⛏️ Auto Mine GUI"
+TitleText.TextColor3 = Color3.fromRGB(255, 255, 255)
+TitleText.Font = Enum.Font.SourceSansBold
+TitleText.TextSize = 16
+TitleText.TextXAlignment = Enum.TextXAlignment.Left
+TitleText.Parent = TitleBar
+
+-- Minimize Btn
 local MinBtn = Instance.new("TextButton")
-MinBtn.Size = UDim2.new(0, 30, 0, 20)
-MinBtn.Position = UDim2.new(1, -60, 0, 5)
+MinBtn.Size = UDim2.new(0, 25, 1, 0)
+MinBtn.Position = UDim2.new(1, -50, 0, 0)
 MinBtn.Text = "-"
-MinBtn.BackgroundColor3 = Color3.fromRGB(100, 100, 0)
-MinBtn.Parent = Frame
+MinBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+MinBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+MinBtn.Parent = TitleBar
 
--- Tombol Exit
+-- Exit Btn
 local ExitBtn = Instance.new("TextButton")
-ExitBtn.Size = UDim2.new(0, 30, 0, 20)
-ExitBtn.Position = UDim2.new(1, -30, 0, 5)
+ExitBtn.Size = UDim2.new(0, 25, 1, 0)
+ExitBtn.Position = UDim2.new(1, -25, 0, 0)
 ExitBtn.Text = "X"
 ExitBtn.BackgroundColor3 = Color3.fromRGB(150, 0, 0)
-ExitBtn.Parent = Frame
+ExitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+ExitBtn.Parent = TitleBar
 
--- Tombol Auto Mine
+-- Buttons
 local AutoMineBtn = Instance.new("TextButton")
-AutoMineBtn.Size = UDim2.new(1, -10, 0, 30)
-AutoMineBtn.Position = UDim2.new(0, 5, 0, 30)
+AutoMineBtn.Size = UDim2.new(1, -20, 0, 30)
+AutoMineBtn.Position = UDim2.new(0, 10, 0, 35)
 AutoMineBtn.Text = "Auto Mine: OFF"
 AutoMineBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+AutoMineBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 AutoMineBtn.Parent = Frame
 
--- Tombol Auto Collect
 local AutoCollectBtn = Instance.new("TextButton")
-AutoCollectBtn.Size = UDim2.new(1, -10, 0, 30)
-AutoCollectBtn.Position = UDim2.new(0, 5, 0, 65)
+AutoCollectBtn.Size = UDim2.new(1, -20, 0, 30)
+AutoCollectBtn.Position = UDim2.new(0, 10, 0, 70)
 AutoCollectBtn.Text = "Auto Collect: OFF"
 AutoCollectBtn.BackgroundColor3 = Color3.fromRGB(80, 80, 80)
+AutoCollectBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 AutoCollectBtn.Parent = Frame
 
--- Tombol Sell Crystal
 local SellBtn = Instance.new("TextButton")
-SellBtn.Size = UDim2.new(1, -10, 0, 30)
-SellBtn.Position = UDim2.new(0, 5, 0, 100)
+SellBtn.Size = UDim2.new(1, -20, 0, 30)
+SellBtn.Position = UDim2.new(0, 10, 0, 105)
 SellBtn.Text = "Sell Crystal"
-SellBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 0)
-SellBtn.TextColor3 = Color3.new(1, 1, 1)
+SellBtn.BackgroundColor3 = Color3.fromRGB(0, 120, 200)
+SellBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
 SellBtn.Parent = Frame
 
 -- // State
 local autoMine = false
 local autoCollect = false
-local minimized = false
+local guiVisible = true
 
 -- // Functions
 local function equipPickaxe()
@@ -220,7 +143,7 @@ task.spawn(function()
     end
 end)
 
--- // Button Toggle
+-- // Button Toggles
 AutoMineBtn.MouseButton1Click:Connect(function()
     autoMine = not autoMine
     AutoMineBtn.Text = "Auto Mine: " .. (autoMine and "ON" or "OFF")
@@ -235,59 +158,19 @@ SellBtn.MouseButton1Click:Connect(function()
     SellEvent:FireServer()
 end)
 
-ExitBtn.MouseButton1Click:Connect(function()
-    ScreenGui:Destroy()
-end)
-
+-- Minimize
 MinBtn.MouseButton1Click:Connect(function()
-    minimized = not minimized
-    for _, child in ipairs(Frame:GetChildren()) do
-        if child:IsA("TextButton") and child ~= MinBtn and child ~= ExitBtn then
-            child.Visible = not minimized
+    guiVisible = not guiVisible
+    for _, v in ipairs(Frame:GetChildren()) do
+        if v ~= TitleBar then
+            v.Visible = guiVisible
         end
     end
+    Frame.Size = guiVisible and UDim2.new(0, 220, 0, 160) or UDim2.new(0, 220, 0, 25)
 end)
 
-
-
--- ================================================================================================================================
-
-local function update(input)
-    local delta = input.Position - dragStart
-    Frame.Position = UDim2.new(
-        startPos.X.Scale, startPos.X.Offset + delta.X,
-        startPos.Y.Scale, startPos.Y.Offset + delta.Y
-    )
-end
-
-Frame.InputBegan:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseButton1 then
-        dragging = true
-        dragStart = input.Position
-        startPos = Frame.Position
-
-        input.Changed:Connect(function()
-            if input.UserInputState == Enum.UserInputState.End then
-                dragging = false
-            end
-        end)
-    end
-end)
-
-Frame.InputChanged:Connect(function(input)
-    if input.UserInputType == Enum.UserInputType.MouseMovement then
-        dragInput = input
-    end
-end)
-
-UserInputService.InputChanged:Connect(function(input)
-    if input == dragInput and dragging then
-        update(input)
-    end
-end)
-
-
-    else
-        statusLbl.Text = "Key Invalid / expired"
-    end
+-- Exit
+ExitBtn.MouseButton1Click:Connect(function()
+    running = false
+    ScreenGui:Destroy()
 end)
