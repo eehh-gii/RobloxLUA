@@ -2,6 +2,7 @@ local games = {
     [82244791980790] = "https://raw.githubusercontent.com/eehh-gii/RobloxLUA/refs/heads/main/kampung-halaman.lua",
     [112249475259380] = "https://raw.githubusercontent.com/eehh-gii/RobloxLUA/refs/heads/main/indo-chat.lua",
     [106540876172687] = "https://github.com/eehh-gii/RobloxLUA/raw/refs/heads/main/pinggir-laut.lua",
+    [123224294054165] = "https://github.com/eehh-gii/RobloxLUA/raw/refs/heads/main/tpcarry-mount-atin.lua"
 }
 
 local currentID = game.PlaceId
