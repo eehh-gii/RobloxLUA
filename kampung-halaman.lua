@@ -131,7 +131,7 @@ end)
 task.spawn(function()
     while true do
         if autoCollect then
-            for , shard in ipairs(Workspace:GetChildren()) do
+            for _, shard in ipairs(Workspace:GetChildren()) do
                 if shard:IsA("Tool") and shard:FindFirstChild("Handle") then
                     local handle = shard.Handle
                     if (handle.Position - hrp.Position).Magnitude < 15 then -- kalau dekat
