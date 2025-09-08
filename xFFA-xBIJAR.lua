@@ -10,5 +10,5 @@ local scriptURL = games[currentID]
 if scriptURL then
     loadstring(game:HttpGet(scriptURL))()
 else
-    game.Players.LocalPlayer:Kick("Sorry! This game ain't on the list.\nCheck the Discord for whitelisted games, homie.")
+    game.Players.LocalPlayer:Kick("xFFA HUB : Sorry! This game ain't on the list.\nCheck the Discord for whitelisted games, homie.")
 end
