@@ -108,17 +108,10 @@ end
 task.spawn(function()
     while true do
         if autoMine then
-            for _, ore in ipairs(Workspace.Ores:GetChildren()) do
-                local root
-                if ore:IsA("Model") then
-                    root = ore.PrimaryPart or ore:FindFirstChildWhichIsA("BasePart")
-                elseif ore:IsA("BasePart") then
-                    root = ore
-                end
-
-                if root and (root.Position - hrp.Position).Magnitude < 15 then
+            for , ore in ipairs(Workspace.Ores:GetChildren()) do
+                if (ore.Position - hrp.Position).Magnitude < 15 then -- kalau dekat
                     equipPickaxe()
-                    triggerPrompt(root)
+                    triggerPrompt(ore)
                 end
             end
         end
