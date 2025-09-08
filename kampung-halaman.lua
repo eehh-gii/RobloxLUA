@@ -127,9 +127,8 @@ task.spawn(function()
 end)
 
 
--- Auto Collect loop
 task.spawn(function()
-    while running do
+    while true do
         if autoCollect then
             for _, shard in ipairs(Workspace:GetChildren()) do
                 if shard:IsA("Tool") and shard:FindFirstChild("Handle") then
