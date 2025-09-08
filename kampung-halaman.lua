@@ -88,6 +88,7 @@ SellBtn.Parent = Frame
 local autoMine = false
 local autoCollect = false
 local guiVisible = true
+local running = true
 
 -- // Functions
 local function equipPickaxe()
@@ -106,19 +107,15 @@ end
 
 -- Auto Mine loop
 task.spawn(function()
-    while true do
+    while running do
         if autoMine then
             for _, ore in ipairs(Workspace.Ores:GetChildren()) do
-                local root
-                if ore:IsA("Model") then
-                    root = ore.PrimaryPart or ore:FindFirstChildWhichIsA("BasePart")
-                elseif ore:IsA("BasePart") then
-                    root = ore
-                end
-
-                if root and (root.Position - hrp.Position).Magnitude < 15 then
-                    equipPickaxe()
-                    triggerPrompt(root)
+                if ore:IsA("Model") or ore:IsA("Part") then
+                    local root = ore:IsA("Model") and ore.PrimaryPart or ore
+                    if root and (root.Position - hrp.Position).Magnitude < 15 then
+                        equipPickaxe()
+                        triggerPrompt(ore)
+                    end
                 end
             end
         end
@@ -128,7 +125,7 @@ end)
 
 -- Auto Collect loop
 task.spawn(function()
-    while true do
+    while running do
         if autoCollect then
             for _, shard in ipairs(Workspace:GetChildren()) do
                 if shard:IsA("Tool") and shard:FindFirstChild("Handle") then
